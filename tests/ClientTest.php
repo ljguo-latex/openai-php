@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI\Tests;
+namespace OpenAI\Tests;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
-use Ljguo\OpenAI\Client;
+use OpenAI\Client;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
@@ -148,7 +148,7 @@ class ClientTest extends TestCase
 
     public function test_api_exception_on_error_response(): void
     {
-        $this->expectException(\Ljguo\OpenAI\Exceptions\ApiException::class);
+        $this->expectException(\OpenAI\Exceptions\ApiException::class);
 
         $error  = ['error' => ['message' => 'Invalid API key', 'type' => 'invalid_request_error']];
         $client = $this->makeClient([new Response(401, [], json_encode($error))]);

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI\Exceptions;
+namespace OpenAI\Exceptions;
 
 use RuntimeException;
 use Throwable;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI\Resources;
+namespace OpenAI\Resources;
 
-use Ljguo\OpenAI\Client;
-use Ljguo\OpenAI\Exceptions\ApiException;
-use Ljguo\OpenAI\Responses\ChatResponse;
+use OpenAI\Client;
+use OpenAI\Exceptions\ApiException;
+use OpenAI\Responses\ChatResponse;
 
 class Chat
 {

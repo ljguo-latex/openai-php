@@ -22,12 +22,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Ljguo\\OpenAI\\": "src/"
+            "OpenAI\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Ljguo\\OpenAI\\Tests\\": "tests/"
+            "OpenAI\\Tests\\": "tests/"
         }
     },
     "scripts": {

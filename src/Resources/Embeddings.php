@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI\Resources;
+namespace OpenAI\Resources;
 
-use Ljguo\OpenAI\Client;
-use Ljguo\OpenAI\Exceptions\ApiException;
-use Ljguo\OpenAI\Responses\EmbeddingResponse;
+use OpenAI\Client;
+use OpenAI\Exceptions\ApiException;
+use OpenAI\Responses\EmbeddingResponse;
 
 class Embeddings
 {

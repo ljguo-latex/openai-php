@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI\Resources;
+namespace OpenAI\Resources;
 
-use Ljguo\OpenAI\Client;
-use Ljguo\OpenAI\Exceptions\ApiException;
-use Ljguo\OpenAI\Responses\ModelListResponse;
-use Ljguo\OpenAI\Responses\ModelResponse;
+use OpenAI\Client;
+use OpenAI\Exceptions\ApiException;
+use OpenAI\Responses\ModelListResponse;
+use OpenAI\Responses\ModelResponse;
 
 class Models
 {

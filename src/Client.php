@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI;
+namespace OpenAI;
 
 use GuzzleHttp\Client as HttpClient;
 use GuzzleHttp\Exception\GuzzleException;
-use Ljguo\OpenAI\Exceptions\ApiException;
-use Ljguo\OpenAI\Resources\Chat;
-use Ljguo\OpenAI\Resources\Completions;
-use Ljguo\OpenAI\Resources\Embeddings;
-use Ljguo\OpenAI\Resources\Models;
+use OpenAI\Exceptions\ApiException;
+use OpenAI\Resources\Chat;
+use OpenAI\Resources\Completions;
+use OpenAI\Resources\Embeddings;
+use OpenAI\Resources\Models;
 
 class Client
 {

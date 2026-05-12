@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ljguo\OpenAI\Responses;
+namespace OpenAI\Responses;
 
 class UsageResponse
 {

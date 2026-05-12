@@ -7,7 +7,7 @@ namespace OpenAI\Responses;
 class EmbeddingResponse
 {
     /** @param EmbeddingData[] $data */
-    private function __construct(
+    public function __construct(
         public readonly string $model,
         public readonly array $data,
         public readonly UsageResponse $usage,

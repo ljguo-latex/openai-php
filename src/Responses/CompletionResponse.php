@@ -7,7 +7,7 @@ namespace OpenAI\Responses;
 class CompletionResponse
 {
     /** @param CompletionChoice[] $choices */
-    private function __construct(
+    public function __construct(
         public readonly string $id,
         public readonly string $model,
         public readonly int $created,

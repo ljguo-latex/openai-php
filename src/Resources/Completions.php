@@ -10,30 +10,73 @@ use OpenAI\Responses\CompletionResponse;
 
 class Completions
 {
+    private string $prompt = '';
+    private ?string $model = null;
+    private float $temperature = 1.0;
+    private ?int $maxTokens = null;
+    private array $options = [];
+
     public function __construct(private readonly Client $client) {}
+
+    public function prompt(string $prompt): static
+    {
+        $this->prompt = $prompt;
+        return $this;
+    }
+
+    public function model(string $model): static
+    {
+        $this->model = $model;
+        return $this;
+    }
+
+    public function temperature(float $temperature): static
+    {
+        $this->temperature = $temperature;
+        return $this;
+    }
+
+    public function maxTokens(int $maxTokens): static
+    {
+        $this->maxTokens = $maxTokens;
+        return $this;
+    }
+
+    public function option(string $key, mixed $value): static
+    {
+        $this->options[$key] = $value;
+        return $this;
+    }
 
     /**
      * @throws ApiException
      */
-    public function create(
-        string $prompt,
-        ?string $model = null,
-        float $temperature = 1.0,
-        ?int $maxTokens = null,
-        array $options = []
-    ): CompletionResponse {
-        $payload = array_merge([
-            'model'       => $model ?? $this->client->getDefaultModel() ?? 'gpt-3.5-turbo-instruct',
-            'prompt'      => $prompt,
-            'temperature' => $temperature,
-        ], $options);
+    public function send(): CompletionResponse
+    {
+        $data = $this->client->post('completions', $this->buildPayload());
+        return CompletionResponse::fromArray($data);
+    }
 
-        if ($maxTokens !== null) {
-            $payload['max_tokens'] = $maxTokens;
+    /**
+     * @throws ApiException
+     */
+    public function stream(callable $callback): void
+    {
+        $this->client->stream('completions', $this->buildPayload(), $callback);
+    }
+
+    private function buildPayload(): array
+    {
+        $payload = array_merge([
+            'model'       => $this->model ?? $this->client->getDefaultModel() ?? 'gpt-3.5-turbo-instruct',
+            'prompt'      => $this->prompt,
+            'temperature' => $this->temperature,
+        ], $this->options);
+
+        if ($this->maxTokens !== null) {
+            $payload['max_tokens'] = $this->maxTokens;
         }
 
-        $data = $this->client->post('completions', $payload);
-
-        return CompletionResponse::fromArray($data);
+        return $payload;
     }
 }

@@ -87,6 +87,67 @@ class Client
     /**
      * @throws ApiException
      */
+    public function stream(string $uri, array $data, callable $callback): void
+    {
+        try {
+            $response = $this->http->request('POST', ltrim($uri, '/'), [
+                'json'   => array_merge($data, ['stream' => true]),
+                'stream' => true,
+            ]);
+
+            $body = $response->getBody();
+
+            while (!$body->eof()) {
+                $line = trim($this->readLine($body));
+
+                if ($line === '' || $line === 'data: [DONE]') {
+                    continue;
+                }
+
+                if (str_starts_with($line, 'data: ')) {
+                    $json = json_decode(substr($line, 6), true);
+                    $chunk = $json['choices'][0]['delta']['content'] ?? null;
+
+                    if ($chunk !== null) {
+                        $callback($chunk);
+                    }
+                }
+            }
+        } catch (GuzzleException $e) {
+            $statusCode  = 0;
+            $responseBody = null;
+
+            if (method_exists($e, 'getResponse') && $e->getResponse() !== null) {
+                $statusCode   = $e->getResponse()->getStatusCode();
+                $responseBody = json_decode((string) $e->getResponse()->getBody(), true);
+            }
+
+            throw new ApiException(
+                $responseBody['error']['message'] ?? $e->getMessage(),
+                $statusCode,
+                $e
+            );
+        }
+    }
+
+    private function readLine(\Psr\Http\Message\StreamInterface $stream): string
+    {
+        $line = '';
+
+        while (!$stream->eof()) {
+            $char = $stream->read(1);
+            if ($char === "\n") {
+                break;
+            }
+            $line .= $char;
+        }
+
+        return $line;
+    }
+
+    /**
+     * @throws ApiException
+     */
     private function request(string $method, string $uri, array $options = []): array
     {
         try {

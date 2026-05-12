@@ -122,7 +122,7 @@ class ClientTest extends TestCase
         ]);
 
         $chunks = [];
-        $client->chat()
+        $full = $client->chat()
             ->model('gpt-4o')
             ->message('Hi')
             ->stream(function (string $chunk) use (&$chunks) {
@@ -130,6 +130,7 @@ class ClientTest extends TestCase
             });
 
         $this->assertSame(['Hello', ' World'], $chunks);
+        $this->assertSame('Hello World', $full);
     }
 
     public function test_embeddings_send_returns_embedding_response(): void

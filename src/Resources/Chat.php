@@ -84,9 +84,14 @@ class Chat
     /**
      * @throws ApiException
      */
-    public function stream(callable $callback): void
+    public function stream(callable $callback): string
     {
-        $this->client->stream('chat/completions', $this->buildPayload(), $callback);
+        $full = '';
+        $this->client->stream('chat/completions', $this->buildPayload(), function (string $chunk) use (&$full, $callback) {
+            $full .= $chunk;
+            $callback($chunk);
+        });
+        return $full;
     }
 
     private function buildPayload(): array

@@ -10,7 +10,7 @@ A lightweight, fluent PHP client for the OpenAI API. Supports custom base URL, A
 ## Installation
 
 ```bash
-composer require ljguo/openai-php
+composer require ljguo-latex/openai-php
 ```
 
 ## Quick Start

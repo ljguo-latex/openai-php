@@ -1,9 +1,9 @@
 {
-    "name": "ljguo/openai-php",
+    "name": "ljguo-latex/openai-php",
     "description": "A PHP client for the OpenAI API with support for custom URL, API key, and model.",
     "type": "library",
     "keywords": ["openai", "api", "client", "gpt", "ai", "llm", "chat"],
-    "homepage": "https://github.com/ljguo/openai-php",
+    "homepage": "https://github.com/ljguo-latex/openai-php",
     "license": "MIT",
     "authors": [
         {

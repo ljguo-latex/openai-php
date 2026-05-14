@@ -9,6 +9,7 @@ use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
 use OpenAI\Client;
 use OpenAI\Exceptions\ApiException;
+use OpenAI\Responses\UsageResponse;
 use PHPUnit\Framework\TestCase;
 
 class ClientTest extends TestCase
@@ -131,6 +132,47 @@ class ClientTest extends TestCase
 
         $this->assertSame(['Hello', ' World'], $chunks);
         $this->assertSame('Hello World', $full);
+    }
+
+    public function test_chat_stream_includes_usage_and_passes_usage_to_callback(): void
+    {
+        $sse = implode("\n", [
+            'data: ' . json_encode(['choices' => [['delta' => ['content' => 'Hello']]], 'usage' => null]),
+            'data: ' . json_encode([
+                'choices' => [],
+                'usage' => ['prompt_tokens' => 10, 'completion_tokens' => 5, 'total_tokens' => 15],
+            ]),
+            'data: [DONE]',
+        ]);
+
+        $mock = new MockHandler([
+            new Response(200, ['Content-Type' => 'text/event-stream'], $sse),
+        ]);
+        $history = [];
+        $stack = HandlerStack::create($mock);
+        $stack->push(\GuzzleHttp\Middleware::history($history));
+
+        $client = new Client(
+            apiKey: 'test-key',
+            httpOptions: ['handler' => $stack]
+        );
+
+        $usage = null;
+        $full = $client->chat()
+            ->model('gpt-4o')
+            ->message('Hi')
+            ->stream(function (string $chunk, ?UsageResponse $chunkUsage = null) use (&$usage) {
+                if ($chunkUsage !== null) {
+                    $usage = $chunkUsage;
+                }
+            });
+
+        $requestBody = json_decode((string) $history[0]['request']->getBody(), true);
+
+        $this->assertSame('Hello', $full);
+        $this->assertSame(['include_usage' => true], $requestBody['stream_options']);
+        $this->assertInstanceOf(UsageResponse::class, $usage);
+        $this->assertSame(15, $usage->totalTokens);
     }
 
     public function test_embeddings_send_returns_embedding_response(): void

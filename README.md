@@ -75,6 +75,25 @@ $client->chat()
     });
 ```
 
+### 流式输出获取 token 用量
+
+```php
+use OpenAI\Responses\UsageResponse;
+
+$client->chat()
+    ->model('gpt-4o')
+    ->message('写一首关于春天的诗')
+    ->stream(function (string $chunk, ?UsageResponse $usage = null) {
+        echo $chunk;
+
+        if ($usage !== null) {
+            echo "\nPrompt tokens: " . $usage->promptTokens;
+            echo "\nCompletion tokens: " . $usage->completionTokens;
+            echo "\nTotal tokens: " . $usage->totalTokens;
+        }
+    });
+```
+
 ### 其他链式方法
 
 | 方法 | 说明 |
@@ -105,8 +124,12 @@ echo $response->text();
 // 流式输出
 $client->completions()
     ->prompt('从前有座山')
-    ->stream(function (string $chunk) {
+    ->stream(function (string $chunk, ?\OpenAI\Responses\UsageResponse $usage = null) {
         echo $chunk;
+
+        if ($usage !== null) {
+            echo "\nTotal tokens: " . $usage->totalTokens;
+        }
     });
 ```
 

@@ -11,6 +11,7 @@ use OpenAI\Resources\Chat;
 use OpenAI\Resources\Completions;
 use OpenAI\Resources\Embeddings;
 use OpenAI\Resources\Models;
+use OpenAI\Responses\UsageResponse;
 
 class Client
 {
@@ -90,8 +91,14 @@ class Client
     public function stream(string $uri, array $data, callable $callback): void
     {
         try {
+            $data['stream'] = true;
+            $data['stream_options'] = array_merge(
+                $data['stream_options'] ?? [],
+                ['include_usage' => true]
+            );
+
             $response = $this->http->request('POST', ltrim($uri, '/'), [
-                'json'   => array_merge($data, ['stream' => true]),
+                'json'   => $data,
                 'stream' => true,
             ]);
 
@@ -106,10 +113,16 @@ class Client
 
                 if (str_starts_with($line, 'data: ')) {
                     $json = json_decode(substr($line, 6), true);
-                    $chunk = $json['choices'][0]['delta']['content'] ?? null;
+
+                    if (isset($json['usage']) && is_array($json['usage'])) {
+                        $callback('', UsageResponse::fromArray($json['usage']));
+                        continue;
+                    }
+
+                    $chunk = $json['choices'][0]['delta']['content'] ?? $json['choices'][0]['text'] ?? null;
 
                     if ($chunk !== null) {
-                        $callback($chunk);
+                        $callback($chunk, null);
                     }
                 }
             }

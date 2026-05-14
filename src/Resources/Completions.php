@@ -7,6 +7,7 @@ namespace OpenAI\Resources;
 use OpenAI\Client;
 use OpenAI\Exceptions\ApiException;
 use OpenAI\Responses\CompletionResponse;
+use OpenAI\Responses\UsageResponse;
 
 class Completions
 {
@@ -63,9 +64,14 @@ class Completions
     public function stream(callable $callback): string
     {
         $full = '';
-        $this->client->stream('completions', $this->buildPayload(), function (string $chunk) use (&$full, $callback) {
+        $this->client->stream('completions', $this->buildPayload(), function (string $chunk, ?UsageResponse $usage = null) use (&$full, $callback) {
+            if ($usage !== null) {
+                $callback($chunk, $usage);
+                return;
+            }
+
             $full .= $chunk;
-            $callback($chunk);
+            $callback($chunk, null);
         });
         return $full;
     }
